@@ -1,6 +1,16 @@
-const API_BASE =
-  (import.meta.env.VITE_API_BASE_URL && import.meta.env.VITE_API_BASE_URL.trim()) ||
-  "/api";
+function normalizeApiBase(rawValue) {
+  const raw = (rawValue || "").trim();
+  if (!raw) return "/api";
+
+  const withoutTrailingSlash = raw.replace(/\/+$/, "");
+  if (withoutTrailingSlash === "/api") return "/api";
+  if (/\/api$/i.test(withoutTrailingSlash)) {
+    return withoutTrailingSlash.replace(/\/api$/i, "");
+  }
+  return withoutTrailingSlash;
+}
+
+const API_BASE = normalizeApiBase(import.meta.env.VITE_API_BASE_URL);
 
 function getToken() {
   return localStorage.getItem("resumate_token") || "";
